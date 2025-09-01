@@ -7,6 +7,53 @@
 	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
 */
 
+
+.my-swal-popup {
+  font-family: inherit !important;
+  border-radius: 12px;
+}
+
+.my-swal-btn {
+  background-color: #333 !important;
+  color: #fff !important;
+  border-radius: 6px;
+  padding: 8px 16px;
+}
+
+/* التحكم بحجم البوكس */
+.my-swal-input {
+  max-width: 250px !important; /* عرض أصغر */
+  margin: 0 auto; /* يوسّطه */
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 14px;
+}
+
+
+/* قائمة مرقمة باللينكات */
+.report-links {
+  direction: rtl;         /* الكتابة من اليمين */
+  text-align: right;      /* محاذاة النص لليمين */
+  list-style-type: decimal; /* ترقيم */
+  padding-right: 20px;    /* مسافة من الحافة اليمنى */
+}
+
+.report-links li {
+  margin-bottom: 10px;     /* مسافة بين العناصر */
+}
+
+.report-links li a {
+  color: #1E90FF;          /* أزرق واضح */
+  text-decoration: none;    /* إزالة الخط السفلي */
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.report-links li a:hover {
+  text-decoration: underline; /* تأثير عند المرور */
+}
+
+
 html, body, div, span, applet, object,
 iframe, h1, h2, h3, h4, h5, h6, p, blockquote,
 pre, a, abbr, acronym, address, big, cite,
@@ -3327,3 +3374,4 @@ input, select, textarea {
 			}
 
 		}
+
