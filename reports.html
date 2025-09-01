@@ -1,0 +1,195 @@
+<!DOCTYPE HTML>
+<!--
+	Phantom by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>منصة متابعة الاعمال والمؤسسات في تركيا</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+        <!-- SweetAlert2 CSS -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css"/>
+        <!-- SweetAlert2 JS -->
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+	</head>
+	<body class="is-preload">
+		<!-- Wrapper -->
+          <div id="protectedContent" style="display:none"></div>
+			<div id="wrapper">
+
+				<!-- Header -->
+					<header id="header">
+						<div class="inner">
+
+							<!-- Logo -->
+								<p  class="logo">
+									<span class="symbol"><img src="images/logo.svg" alt="" /></span><span class="title">منصة متابعة الاعمال والمؤسسات في تركيا</span>
+								</p>
+
+							<!-- Nav -->
+								<nav>
+									<ul>
+										<li><a href="#menu">Menu</a></li>
+									</ul>
+								</nav>
+
+						</div>
+					</header>
+
+				<!-- Menu -->
+					<nav id="menu">
+						<h2>Menu</h2>
+						<ul>
+							<li><a href="index.html">Home</a></li>
+							<li><a href="reports.html">Reports</a></li>
+							<li><a href="generic.html">Tempus etiam</a></li>
+							<li><a href="generic.html">Consequat dolor</a></li>
+							<li><a href="elements.html">Elements</a></li>
+						</ul>
+					</nav>
+
+				<!-- Main -->
+					<div id="main">
+						<div class="inner">
+							<h1>روابط التقارير الشهرية للمؤسسات - لينك</h1>
+							<span class="image main"><img src="images/amq.png" alt="" /></span>
+							
+							<ol class="report-links">
+							<li><a href="https://form.jotform.com/252384049105454">نموذج تقرير اداري ومالي الزامي للمؤسسات</a></li>
+							<li><a href="https://form.jotform.com/252398430073053">نموذج التقرير الإداري</a></li>
+							</ol>
+						</div>
+					</div>
+
+
+				<!-- Footer -->
+					<footer id="footer">
+						<div class="inner">
+							<!-- <section>
+								<h2>Get in touch</h2>
+								<form method="post" action="#">
+									<div class="fields">
+										<div class="field half">
+											<input type="text" name="name" id="name" placeholder="Name" />
+										</div>
+										<div class="field half">
+											<input type="email" name="email" id="email" placeholder="Email" />
+										</div>
+										<div class="field">
+											<textarea name="message" id="message" placeholder="Message"></textarea>
+										</div>
+									</div>
+									<ul class="actions">
+										<li><input type="submit" value="Send" class="primary" /></li>
+									</ul>
+								</form>
+							</section> -->
+							<section>
+								<h2>Follow</h2>
+								<ul class="icons">
+									<li><a href="#" class="icon brands style2 fa-twitter"><span class="label">Twitter</span></a></li>
+									<li><a href="#" class="icon brands style2 fa-facebook-f"><span class="label">Facebook</span></a></li>
+									<li><a href="#" class="icon brands style2 fa-instagram"><span class="label">Instagram</span></a></li>
+									<li><a href="#" class="icon brands style2 fa-dribbble"><span class="label">Dribbble</span></a></li>
+									<li><a href="#" class="icon brands style2 fa-github"><span class="label">GitHub</span></a></li>
+									<li><a href="#" class="icon brands style2 fa-500px"><span class="label">500px</span></a></li>
+									<li><a href="#" class="icon solid style2 fa-phone"><span class="label">Phone</span></a></li>
+									<li><a href="#" class="icon solid style2 fa-envelope"><span class="label">Email</span></a></li>
+								</ul>
+							</section>
+						</div>
+					</footer>
+
+			</div>
+          </div>
+
+		<!-- Scripts -->
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/browser.min.js"></script>
+			<script src="assets/js/breakpoints.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<script src="assets/js/main.js"></script>
+            <script>
+
+                const textDecoder = new TextDecoder('utf-8');
+                function b64ToBytes(b64) {
+                const bin = atob(b64);
+                return Uint8Array.from(bin, c => c.charCodeAt(0));
+                }
+
+
+                async function deriveKey(password, salt, iterations=200000) {
+                const enc = new TextEncoder();
+                const baseKey = await crypto.subtle.importKey('raw', enc.encode(password), {name:'PBKDF2'}, false, ['deriveKey']);
+                return crypto.subtle.deriveKey({name:'PBKDF2',salt,iterations,hash:'SHA-256'}, baseKey, {name:'AES-GCM',length:256}, false, ['decrypt']);
+                }
+
+
+                async function decryptPayload(bundle, password) {
+                const salt = b64ToBytes(bundle.salt_b64);
+                const iv = b64ToBytes(bundle.iv_b64);
+                const ct = b64ToBytes(bundle.ciphertext_b64);
+                const tag = b64ToBytes(bundle.tag_b64);
+                const combined = new Uint8Array(ct.length + tag.length);
+                combined.set(ct,0); combined.set(tag, ct.length);
+                const key = await deriveKey(password, salt, bundle.iterations);
+                const plainBuf = await crypto.subtle.decrypt({name:'AES-GCM',iv,tagLength:128}, key, combined);
+                return textDecoder.decode(new Uint8Array(plainBuf));
+                }
+
+
+                async function askPassword() {
+                const res = await fetch('protected_payload.json');
+                const bundle = await res.json();
+
+                while (true) {
+                    const { value: pwd, isConfirmed } = await Swal.fire({
+                    title: 'أدخل كلمة السر',
+                    input: 'password',
+                    confirmButtonText: 'فتح',
+                    allowOutsideClick: false,
+                    showCancelButton: false,
+                    backdrop: 'rgba(173,216,230,0.3)', // أزرق فاتح غباش
+                    didOpen: () => {
+                        const swalBackdrop = document.querySelector('.swal2-container');
+                        if (swalBackdrop) swalBackdrop.style.backdropFilter = 'blur(8px)';
+                    },
+                    customClass: {
+                        popup: 'my-swal-popup',
+                        confirmButton: 'my-swal-btn',
+                        input: 'my-swal-input'
+                    }
+                    });
+
+                    if (!isConfirmed) return;
+
+                    try {
+                    await decryptPayload(bundle, pwd); // تحقق كلمة السر
+                    document.getElementById('protectedContent').style.display = 'block';
+                    Swal.close();
+                    break;
+                    } catch(e) {
+                    await Swal.fire({
+                        icon: 'error',
+                        title: 'كلمة سر خاطئة .. يرجى المحاولة من جديد',
+                        backdrop: 'rgba(173,216,230,0.3)', // نفس الخلفية
+                        didOpen: () => {
+                        const swalBackdrop = document.querySelector('.swal2-container');
+                        if (swalBackdrop) swalBackdrop.style.backdropFilter = 'blur(8px)';
+                        },
+                    });
+                    }
+                }
+                }
+
+                askPassword();
+            </script>
+
+	</body>
+</html>
